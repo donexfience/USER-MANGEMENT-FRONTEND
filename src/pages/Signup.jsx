@@ -75,7 +75,7 @@ const Signup = () => {
         }).then((res) => {
           console.log(res, "dataaaaaaa");
           if (res.status == "201") {
-            navigate("/sign-in");
+            navigate("/");
           }
         });
         console.log(data, "from backend");

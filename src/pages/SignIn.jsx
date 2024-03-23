@@ -7,10 +7,12 @@ import {
   signInSuccess,
 } from "../redux/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
+import OAuth from "../components/OAuth.jsx";
+import axios from "axios";
 
 const SignIn = () => {
   const { loading, error } = useSelector((state) => state.user);
-  console.log("+++++++++++++++++++++++++++++======",error)
+  console.log("+++++++++++++++++++++++++++++======", error);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,19 +28,24 @@ const SignIn = () => {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      console.log(data.error,'this is data.....');
-      if (!data.status) {
+      const res = await axios.post(
+        "http://localhost:3000/auth/login",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      // const data = await res.json();
+      console.log(res, "this is data.....");
+      const data = res.data
+      if (!res.data.status) {
         dispatch(signInFailure(data.error));
         return;
       }
+      console.log("login data ", data);
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
@@ -73,13 +80,13 @@ const SignIn = () => {
             onChange={handlechange}
             id="password"
           />
-          {error && (
+          {/* {error && (
             <p className="text-red-500 text-sm mt-2">
-              {error ||
-                "Error occurred while signing in. Please try again."}
+              {error || "An error occurred while signing in. Please try again."}
             </p>
-          )}
+          )} */}
 
+          <OAuth />
           <button
             disabled={loading}
             className="bg-blue-600 text-white p-3 rounded-lg uppercase hover:bg-blue-700 disabled:opacity-80"
